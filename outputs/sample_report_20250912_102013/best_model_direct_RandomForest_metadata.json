@@ -1,0 +1,13 @@
+{
+  "model_name": "direct_RandomForest",
+  "model_type": "RandomForestRegressor",
+  "metrics": {
+    "RMSE": 465.181446824171,
+    "MAE": 381.7092357526841,
+    "R2": 0.8129844289738121,
+    "MAPE": 19.1026045032443,
+    "MSE": 216393.77846942906
+  },
+  "timestamp": "2025-09-12T10:20:30.141701",
+  "model_path": "outputs\\sample_report_20250912_102013\\best_model_direct_RandomForest.joblib"
+}

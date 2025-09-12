@@ -1,0 +1,27 @@
+SAMPLE DELIVERY DURATION PREDICTION - COMPARISON REPORT
+============================================================
+
+Sample Data: sample_data.csv
+Total Samples: 42
+Features Used: 48
+
+1. DIRECT APPROACH
+--------------------
+Best Model: RandomForest
+RMSE: 465.18
+R²: 0.8130
+MAE: 381.71
+
+2. TWO-STAGE APPROACH
+--------------------
+Preparation Model RMSE: 2117.34
+Final Model: XGBoost
+Final RMSE: 870.79
+Final R²: 0.2617
+Final MAE: 800.75
+Simple Sum RMSE: 512.10
+
+3. RECOMMENDATION
+--------------------
+Direct approach is better
+Recommended approach: Direct with RandomForest

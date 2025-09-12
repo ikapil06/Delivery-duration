@@ -1,0 +1,8 @@
+{
+  "model_name": "two_stage_XGBoost",
+  "model_type": "XGBRegressor",
+  "metrics": {
+    "RMSE": 870.7947519364135,
+    "MAE": 800.7499389648438,
+    "R2": 0.2617385983467102,
+    "MAPE": 

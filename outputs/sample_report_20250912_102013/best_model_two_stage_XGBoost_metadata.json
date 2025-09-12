@@ -1,0 +1,13 @@
+{
+  "model_name": "two_stage_XGBoost",
+  "model_type": "XGBRegressor",
+  "metrics": {
+    "RMSE": 870.7947519364135,
+    "MAE": 800.7499389648438,
+    "R2": 0.2617385983467102,
+    "MAPE": 36.914588928222656,
+    "MSE": 758283.5
+  },
+  "timestamp": "2025-09-12T10:20:35.189169",
+  "model_path": "outputs\\sample_report_20250912_102013\\best_model_two_stage_XGBoost.joblib"
+}
