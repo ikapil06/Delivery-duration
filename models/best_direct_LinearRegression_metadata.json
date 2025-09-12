@@ -1,0 +1,14 @@
+{
+  "model_name": "best_direct_LinearRegression",
+  "model_type": "LinearRegression",
+  "metrics": {
+    "RMSE": 0.0006966040505974107,
+    "MAE": 0.0005110613419674337,
+    "R2": 1.0,
+    "MAPE": 1.921196781040635e-05,
+    "MSE": 4.852572033087199e-07
+  },
+  "timestamp": "2025-09-12T13:03:19.742145",
+  "pkl_path": "models\\best_direct_LinearRegression.pkl",
+  "is_best_overall": true
+}

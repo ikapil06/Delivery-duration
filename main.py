@@ -7,6 +7,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+import joblib
 
 # Import custom modules
 from data_preprocessing import DataPreprocessor
@@ -124,27 +126,24 @@ class DeliveryDurationPredictor:
             X, y, test_size=TEST_SIZE, random_state=RANDOM_STATE
         )
         
-        # Scale features
-        X_train_scaled, y_train_scaled, X_scaler, y_scaler = self.feature_engineer.scale_features(
-            X_train, y_train, scaler_type='standard'
+        # Scale features only (not targets)
+        X_train_scaled, X_scaler = self.feature_engineer.scale_features(
+            X_train, scaler_type='standard'
         )
         X_test_scaled = X_scaler.transform(X_test)
         
-        # Train preparation time model
-        prep_model, prep_predictions_scaled, prep_rmse = self.model_trainer.train_preparation_time_model(
-            X_train_scaled, y_train_scaled[:, 0], X_test_scaled, y_test
+        # Train preparation time model (use scaled features but original targets)
+        prep_model, prep_predictions, prep_rmse = self.model_trainer.train_preparation_time_model(
+            X_train_scaled, y_train.values.flatten(), X_test_scaled, y_test.values.flatten()
         )
-        
-        # Inverse transform preparation time predictions
-        prep_predictions = y_scaler.inverse_transform(prep_predictions_scaled.reshape(-1, 1))[:, 0]
         
         # Create final prediction dataframe
         test_indices = X_test.index
         pred_df = pd.DataFrame({
-            'actual_total_delivery_duration': self.features_data[TARGET_COLUMN].iloc[test_indices].values,
+            'actual_total_delivery_duration': y_test.values,
             'prep_duration_prediction': prep_predictions,
-            'estimated_store_to_consumer_driving_duration': self.features_data['estimated_store_to_consumer_driving_duration'].iloc[test_indices].values,
-            'estimated_order_place_duration': self.features_data['estimated_order_place_duration'].iloc[test_indices].values
+            'estimated_store_to_consumer_driving_duration': X_test['estimated_store_to_consumer_driving_duration'].values,
+            'estimated_order_place_duration': X_test['estimated_order_place_duration'].values
         })
         
         # Sum up components
@@ -266,6 +265,75 @@ class DeliveryDurationPredictor:
                 'predicted': self.results['two_stage_approach']['final_predictions']
             })
             pred_df.to_csv(pred_path, index=False)
+        
+        # Save the overall best model to models folder
+        self.save_overall_best_model(report_dir)
+    
+    def save_overall_best_model(self, report_dir):
+        """Save the overall best performing model to models folder"""
+        print("Saving overall best model...")
+        
+        best_model = None
+        best_model_name = None
+        best_metrics = None
+        best_rmse = float('inf')
+        
+        # Find the best model from all approaches
+        if 'direct_approach' in self.results:
+            direct_rmse = self.results['direct_approach']['metrics']['RMSE']
+            if direct_rmse < best_rmse:
+                best_rmse = direct_rmse
+                # Get the best model from model trainer
+                best_model = self.model_trainer.results[self.results['direct_approach']['best_model']]['model']
+                best_model_name = f"best_direct_{self.results['direct_approach']['best_model']}"
+                best_metrics = self.results['direct_approach']['metrics']
+        
+        if 'two_stage_approach' in self.results:
+            two_stage_rmse = self.results['two_stage_approach']['final_metrics']['RMSE']
+            if two_stage_rmse < best_rmse:
+                best_rmse = two_stage_rmse
+                best_model = self.results['two_stage_approach']['model']
+                best_model_name = f"best_two_stage_{self.results['two_stage_approach']['final_model']}"
+                best_metrics = self.results['two_stage_approach']['final_metrics']
+        
+        if best_model is not None:
+            # Save the best model
+            pkl_path = os.path.join(MODEL_DIR, f"{best_model_name}.pkl")
+            joblib.dump(best_model, pkl_path)
+            
+            # Save metadata
+            metadata_path = os.path.join(MODEL_DIR, f"{best_model_name}_metadata.json")
+            import json
+            
+            def convert_numpy_types(obj):
+                if isinstance(obj, dict):
+                    return {key: convert_numpy_types(value) for key, value in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_numpy_types(item) for item in obj]
+                elif hasattr(obj, 'item'):
+                    return obj.item()
+                elif hasattr(obj, 'tolist'):
+                    return obj.tolist()
+                else:
+                    return obj
+            
+            metadata = {
+                'model_name': best_model_name,
+                'model_type': type(best_model).__name__,
+                'metrics': convert_numpy_types(best_metrics),
+                'timestamp': pd.Timestamp.now().isoformat(),
+                'pkl_path': pkl_path,
+                'is_best_overall': True
+            }
+            
+            with open(metadata_path, 'w') as f:
+                json.dump(metadata, f, indent=2)
+            
+            print(f"Overall best model saved to {pkl_path}")
+            print(f"Best model metadata saved to {metadata_path}")
+            print(f"Best model: {best_model_name} with RMSE: {best_rmse:.2f}")
+        else:
+            print("No models available to save")
 
 
 def main():

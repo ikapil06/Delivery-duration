@@ -182,11 +182,14 @@ class ModelTrainer:
     
     def save_best_model(self, model_name, model, metrics, report_dir):
         """Save the best performing model with metadata"""
-        model_path = os.path.join(report_dir, f"best_model_{model_name}.joblib")
+        # Save in both .joblib and .pkl formats
+        joblib_path = os.path.join(report_dir, f"best_model_{model_name}.joblib")
+        pkl_path = os.path.join(MODEL_DIR, f"best_model_{model_name}.pkl")
         metadata_path = os.path.join(report_dir, f"best_model_{model_name}_metadata.json")
         
-        # Save model
-        joblib.dump(model, model_path)
+        # Save model in both formats
+        joblib.dump(model, joblib_path)
+        joblib.dump(model, pkl_path)
         
         # Save metadata
         import json
@@ -208,16 +211,18 @@ class ModelTrainer:
             'model_type': type(model).__name__,
             'metrics': convert_numpy_types(metrics),
             'timestamp': pd.Timestamp.now().isoformat(),
-            'model_path': model_path
+            'joblib_path': joblib_path,
+            'pkl_path': pkl_path
         }
         
         with open(metadata_path, 'w') as f:
             json.dump(metadata, f, indent=2)
         
-        print(f"Best model saved to {model_path}")
+        print(f"Best model saved to {joblib_path}")
+        print(f"Best model saved to {pkl_path}")
         print(f"Model metadata saved to {metadata_path}")
         
-        return model_path, metadata_path
+        return pkl_path, metadata_path
     
     def get_results_summary(self):
         """Get summary of all model results"""

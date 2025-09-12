@@ -106,7 +106,7 @@ class FeatureEngineer:
             model = RandomForestRegressor(random_state=RANDOM_STATE, n_jobs=-1)
         
         # Prepare features and target
-        X = data.drop(columns=[TARGET_COLUMN])
+        X = data.drop(columns=[TARGET_COLUMN, PREP_TIME_COLUMN])
         y = data[TARGET_COLUMN]
         
         # Fit model to get feature importances

@@ -1,0 +1,23 @@
+DELIVERY DURATION PREDICTION - COMPARISON REPORT
+============================================================
+
+1. DIRECT APPROACH
+--------------------
+Best Model: LinearRegression
+RMSE: 0.00
+R²: 1.0000
+MAE: 0.00
+
+2. TWO-STAGE APPROACH
+--------------------
+Preparation Model RMSE: 1085.76
+Final Model: MLP
+Final RMSE: 1133.40
+Final R²: 0.1137
+Final MAE: 713.22
+Simple Sum RMSE: 1565.58
+
+3. RECOMMENDATION
+--------------------
+Direct approach is better
+Recommended approach: Direct with LinearRegression

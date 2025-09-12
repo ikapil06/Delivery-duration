@@ -1,0 +1,10 @@
+feature,importance
+subtotal,0.22664317945712367
+estimated_store_to_consumer_driving_duration,0.17484488045810867
+busy_dashers_ratio,0.16526008576054377
+total_outstanding_orders,0.1283854815090494
+min_item_price,0.1200402574277438
+max_item_price,0.10769012494051135
+total_items,0.027757286340654642
+num_distinct_items,0.025682202792593214
+estimated_order_place_duration,0.023696501313671535
