@@ -32,7 +32,7 @@ delivery-duration-prediction/
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ikapil06/Delivery-duration
    cd delivery-duration-prediction
    ```
 
